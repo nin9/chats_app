@@ -1,0 +1,6 @@
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+RSpec/MultipleExpectations:
+  Max: 3
