@@ -19,7 +19,6 @@ func CreateChat(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusNotFound, "App not found")
 	}
 	workers.Enqueue("default", "CreateChat", []string{appToken, strconv.FormatInt(chatNumber, 10)})
-	w.WriteHeader(http.StatusCreated)
 	data := struct {
 		ChatNumber int64 `json:"chat_number"`
 	}{chatNumber}
