@@ -1,0 +1,77 @@
+version: '3'
+
+services:
+  ##Go_app##
+  go_app:
+    build: ./go_app
+    command: ./app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    env_file:
+      - .env
+
+  ##Rails_app##
+  rails_app:
+    build: ./rails_app
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - ./rails_app:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+      - elasticsearch
+      - redis
+    env_file:
+      - .env
+
+  ##Sidekiq##
+  sidekiq:
+    build: ./rails_app
+    command: bundle exec sidekiq
+    volumes:
+      - ./rails_app:/app
+    depends_on:
+      - mysql
+      - redis
+    env_file:
+      - .env
+
+  ##MySQL##
+  mysql:
+    image: 'mysql:8'
+    container_name: 'mysql'
+    ports:
+      - '3306:3306'
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${MYSQL_TIMEZONE}
+
+  ##Redis##
+  redis:
+    image: 'redis:6'
+    container_name: 'redis'
+    ports:
+      - "6379:6379"
+
+  #Elasticsearch##
+  elasticsearch:
+    image: 'elasticsearch:7.10.1'
+    environment:
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
