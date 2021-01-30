@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
@@ -14,9 +16,15 @@ import (
 )
 
 func setupRedis() error {
+	var dbNo int
+	dbNo, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+	if err != nil {
+		dbNo = 0
+	}
 	database.DB = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-		DB:   0,
+		Addr:     os.Getenv("REDIS_URL"),
+		DB:       dbNo,
+		PoolSize: 20,
 	})
 	if err := database.DB.Ping(database.Ctx).Err(); err != nil {
 		return err
@@ -28,8 +36,9 @@ func setupRedis() error {
 func setupWorkers() {
 	workers.Configure(map[string]string{
 		"process":  "publisher",
-		"server":   "localhost:6379",
-		"database": "0",
+		"server":   os.Getenv("REDIS_URL"),
+		"database": os.Getenv("REDIS_DB"),
+		"pool":     "20",
 	})
 }
 
@@ -38,7 +47,7 @@ func handleRequests() {
 	r.HandleFunc("/apps/{token}/chats", controllers.CreateChat).Methods("POST")
 	r.HandleFunc("/apps/{token}/chats/{chat_number}/messages", controllers.CreateMessage).Methods("POST")
 	fmt.Println("Server started")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	log.Fatal(http.ListenAndServe(":8000", r))
 }
 
 func main() {
