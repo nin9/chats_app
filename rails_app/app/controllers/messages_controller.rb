@@ -12,7 +12,7 @@ class MessagesController < ApplicationController
   end
 
   def search
-    messages = Message.search(params[:q], where: { chat_id: @chat.id })
+    messages = Message.search(params[:q], where: { chat_id: @chat.id }, match: :word_start, misspellings: false)
     render json: messages, status: :ok
   end
 
