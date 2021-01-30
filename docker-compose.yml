@@ -30,7 +30,7 @@ services:
   ##Sidekiq##
   sidekiq:
     build: ./rails_app
-    command: bundle exec sidekiq
+    command: bundle exec sidekiq -q default -q chats -q messages
     volumes:
       - ./rails_app:/app
     depends_on:

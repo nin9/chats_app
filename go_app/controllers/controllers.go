@@ -18,7 +18,7 @@ func CreateChat(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "App not found")
 	}
-	workers.Enqueue("default", "CreateChat", []string{appToken, strconv.FormatInt(chatNumber, 10)})
+	workers.Enqueue("chats", "CreateChat", []string{appToken, strconv.FormatInt(chatNumber, 10)})
 	data := struct {
 		ChatNumber int64 `json:"chat_number"`
 	}{chatNumber}
@@ -43,7 +43,7 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "chat not found", http.StatusNotFound)
 	}
-	workers.Enqueue("default", "CreateMessage", []string{appToken, chatNumber, strconv.FormatInt(msgNumber, 10), msgBody.Body})
+	workers.Enqueue("messages", "CreateMessage", []string{appToken, chatNumber, strconv.FormatInt(msgNumber, 10), msgBody.Body})
 	data := struct {
 		MessageNumber int64 `json:"message_number"`
 	}{msgNumber}
