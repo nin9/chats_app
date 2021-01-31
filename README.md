@@ -55,7 +55,7 @@ Endpoints for go_app, serving at `localhost:8000`
 
 ### Chats and messages creation
 
-- In *go_app* redis handles the chat/message number using **Incr** command, then a pushes a job to sidekiq to create a chat/message and
+- In *go_app* redis handles the chat/message number using **Incr** command, then go_workers pushes a job to sidekiq to create a chat/message and
 a response is sent to the user with the number.
 
 - Sidekiq is then responsible for creating the chat/message, incrementing the chats_count/messages_count and presisting the data to mysql.
