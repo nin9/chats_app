@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/jrallison/go-workers"
 	"github.com/nin9/go_app/database"
+	"github.com/nin9/go_app/producer"
 )
 
 func CreateChat(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +18,7 @@ func CreateChat(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		respondWithError(w, http.StatusNotFound, "App not found")
 	}
-	workers.Enqueue("chats", "CreateChat", []string{appToken, strconv.FormatInt(chatNumber, 10)})
+	producer.Producer.Enqueue("chats", "CreateChat", []string{appToken, strconv.FormatInt(chatNumber, 10)})
 	data := struct {
 		ChatNumber int64 `json:"chat_number"`
 	}{chatNumber}
@@ -43,7 +43,7 @@ func CreateMessage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "chat not found", http.StatusNotFound)
 	}
-	workers.Enqueue("messages", "CreateMessage", []string{appToken, chatNumber, strconv.FormatInt(msgNumber, 10), msgBody.Body})
+	producer.Producer.Enqueue("messages", "CreateMessage", []string{appToken, chatNumber, strconv.FormatInt(msgNumber, 10), msgBody.Body})
 	data := struct {
 		MessageNumber int64 `json:"message_number"`
 	}{msgNumber}

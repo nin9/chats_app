@@ -8,11 +8,12 @@ import (
 	"os"
 	"strconv"
 
+	workers "github.com/digitalocean/go-workers2"
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
-	"github.com/jrallison/go-workers"
 	"github.com/nin9/go_app/controllers"
 	"github.com/nin9/go_app/database"
+	"github.com/nin9/go_app/producer"
 )
 
 func setupRedis() error {
@@ -22,9 +23,8 @@ func setupRedis() error {
 		dbNo = 0
 	}
 	database.DB = redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("REDIS_URL"),
-		DB:       dbNo,
-		PoolSize: 20,
+		Addr: os.Getenv("REDIS_URL"),
+		DB:   dbNo,
 	})
 	if err := database.DB.Ping(database.Ctx).Err(); err != nil {
 		return err
@@ -33,13 +33,22 @@ func setupRedis() error {
 	return nil
 }
 
-func setupWorkers() {
-	workers.Configure(map[string]string{
-		"process":  "publisher",
-		"server":   os.Getenv("REDIS_URL"),
-		"database": os.Getenv("REDIS_DB"),
-		"pool":     "20",
+func setupProducer() {
+	var dbNo int
+	dbNo, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+	if err != nil {
+		dbNo = 0
+	}
+	workersProducer, err := workers.NewProducer(workers.Options{
+		ServerAddr: os.Getenv("REDIS_URL"),
+		Database:   dbNo,
+		ProcessID:  "go_producer",
 	})
+
+	producer.Producer = workersProducer
+	if err != nil {
+		log.Fatalf("Failed to setup producer: %s", err.Error())
+	}
 }
 
 func handleRequests() {
@@ -56,7 +65,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to redis: %s", err.Error())
 	}
-	setupWorkers()
+	setupProducer()
 	handleRequests()
 
 	defer database.DB.Close()
