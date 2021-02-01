@@ -65,6 +65,6 @@ a response is sent to the user with the number.
 - For this to work I used [go_workers2](https://github.com/digitalocean/go-workers2) pacakge, which can publish jobs to sidekiq, in this way redis is used as both:
 
   - Generator for chat/message numbers, since redis is single threaded it's ACID complient by nature, hence we can guarantee that there will be no race  conitions in  chat/message numbers creation.
-  - Communication queue between the 2 services to push jobs from go_app to sidekiq.
+  - Communication queue between the 2 services to push jobs from *go_app* to sidekiq.
 
 - Database locks are used to ensure that the chats/messages_count are correct, and transactions are used to make the 2 operations (creating the chat/message and updating the count) atomic.
