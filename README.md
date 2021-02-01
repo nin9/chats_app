@@ -62,10 +62,10 @@ a response is sent to the user with the number.
 
 - A message queue (RabbitMq, kafka, ...etc) could've been used, but since redis is a single point failure in this design, introduceing another single point of failure is not optimal, specially since the same functionality can be achived using redis.
 
-- For this to work I used go-workers pacakge, which can publish jobs to sidekiq, in this way redis is used for both:
+- For this to work I used [go_workers2](https://github.com/digitalocean/go-workers2) pacakge, which can publish jobs to sidekiq, in this way redis is used as both:
 
   - Generator for chat/message numbers, since redis is single threaded it's ACID complient by nature, hence we can guarantee that there will be no race  conitions in  chat/message numbers creation.
-  - Communication between the 2 services.
+  - Communication queue between the 2 services.
 
 - Database locks are used to ensure that the chats/messages_count are correct, and transaction are used to make the 2 operations (creating the chat/message and updating the count) atomic.
 
