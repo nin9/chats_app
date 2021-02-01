@@ -1,5 +1,5 @@
 class Message < ApplicationRecord
-  searchkick word_start: [:body]
+  searchkick text_start: [:body]
 
   belongs_to :chat
   validates :number, :body, presence: true
