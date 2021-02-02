@@ -59,7 +59,7 @@ RSpec.describe 'Messages Endpoints', type: :request do
       end
 
       it "returns empty array if query didn't match any messages", search: true do
-        get search_app_chat_messages_path(chat1.app.token, chat1.number, q: 'tell')
+        get search_app_chat_messages_path(chat1.app.token, chat1.number, q: 'wrong query')
         expect(response).to be_ok
         expect(payload).to be_blank
       end
