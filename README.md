@@ -35,6 +35,7 @@ Endpoints for rails_app, serving at `localhost:3000`
 | GET  | /apps                               |            |
 | POST | /apps                               | name       |
 | GET  | /apps/:token                        |            |
+| PUT  | /apps/:token                        | name       |
 | GET  | /apps/:app_token/chats              |            |
 | GET  | /apps/:app_token/chats/:number      |            |
 | GET  | /apps/:app_token/chats/:number/search?q=:search_string
