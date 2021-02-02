@@ -14,6 +14,12 @@ class AppsController < ApplicationController
     render json: app, status: :ok
   end
 
+  def update
+    app = App.find_by!(token: params[:token])
+    app.update!(name: app_params[:name])
+    render json: app, status: :ok
+  end
+
   private
 
   def app_params

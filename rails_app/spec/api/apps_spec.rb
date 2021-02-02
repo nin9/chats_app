@@ -50,4 +50,24 @@ RSpec.describe 'Apps Endpoints', type: :request do
       end
     end
   end
+
+  describe 'PUT /apps/:token' do
+    let(:some_app) { create(:app) }
+
+    context 'when valid' do
+      it 'creates an app' do
+        put app_path(some_app.token), params: { name: 'app' }
+        expect(response).to be_ok
+        expect(payload['token']).to eq some_app.token
+        expect(payload['name']).to eq 'app'
+      end
+    end
+
+    context 'when invalid' do
+      it 'returns an error if name is blank' do
+        put app_path(some_app.token), params: { name: '' }
+        expect(response).to be_unprocessable
+      end
+    end
+  end
 end
