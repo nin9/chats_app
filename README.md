@@ -23,7 +23,7 @@ docker-compose exec rails_app bundle exec rake db:migrate
 4- Create elasticsearch index.
 
 ``` shell
-docker-compose exec rails_app rake searchkick:reindex:all
+docker-compose exec rails_app bundle exec rake searchkick:reindex:all
 ```
 
 5 - Run rspec
