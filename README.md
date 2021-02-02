@@ -60,7 +60,7 @@ a response is sent to the user with the number.
 
 - Sidekiq is then responsible for creating the chat/message, incrementing the chats_count/messages_count and presisting the data to mysql.
 
-- A message queue (RabbitMq, kafka, ...etc) could've been used, but since redis is a single point failure in this design, introduceing another single point of failure is not optimal, specially since the same functionality can be achieved using redis.
+- A message queue (RabbitMq, kafka, ...etc) could've been used, but since redis is a single point of failure in this design, introduceing another single point of failure is not optimal, specially since the same functionality can be achieved using redis.
 
 - For this to work I used [go_workers2](https://github.com/digitalocean/go-workers2) pacakge, which can publish jobs to sidekiq, in this way redis is used as both:
 
