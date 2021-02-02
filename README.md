@@ -11,19 +11,25 @@ docker-compose up
 2- Create the databases.
 
 ``` shell
-docker-compose exec rails_app rake db:create
+docker-compose exec rails_app bundle exec rake db:create
 ```
 
 3- Run the migrations.
 
 ``` shell
-docker-compose exec rails_app rake db:migrate
+docker-compose exec rails_app bundle exec rake db:migrate
 ```
 
 4- Create elasticsearch index.
 
 ``` shell
 docker-compose exec rails_app rake searchkick:reindex:all
+```
+
+5 - Run rspec
+
+```shell
+docker-compose exec rails_app bundle exec rspec
 ```
 
 ## API
